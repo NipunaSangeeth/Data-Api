@@ -12,7 +12,7 @@ export const authenticationMiddleware = (
     if (!auth.userId) {
         throw new UnauthorizedError("Unauthorized");
     }
-    console.log("what is the auth",auth)
+    // console.log("what is the auth",auth)
 
     next();
 };

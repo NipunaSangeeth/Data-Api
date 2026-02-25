@@ -8,6 +8,7 @@ export const getAllUsers = async (
   ) => {
     try {
       const users = await User.find();
+      console.log(users)
       res.status(200).json(users);
     } catch (error) {
       next(error);
