@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
+import { string } from "zod";
 
 const energyGenarationRecordSchema = new mongoose.Schema({
-  solarUnitId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "SolarUnit",
+  serialNumber: {
+    type: String,
     required: true,
   },
   energyGenerated: {

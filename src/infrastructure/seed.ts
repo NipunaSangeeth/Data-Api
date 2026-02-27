@@ -1,35 +1,28 @@
 import mongoose from "mongoose";
-import { SolarUnit } from "./entities/SolarUnit";
 import { EnergyGenarationRecord } from "./entities/EnergyGenarationRecord";
-import { User } from "./entities/User";
 import dotenv from "dotenv";
 import { connectDB } from "./db";
 
 dotenv.config();
 
 async function seed() {
+
+    const serialNumber = "SU-0001"
+
   try {
     // Connect to DB
     await connectDB();
 
     // Clear existing data
     await EnergyGenarationRecord.deleteMany({});
-    await SolarUnit.deleteMany({});
-    await User.deleteMany({});
 
-    // Create a new solar unit linked to the user
-    const solarUnit = await SolarUnit.create({
-      serialNumber: "SU-0001",
-      installationDate: new Date("2025-10-05"),
-      capacity: 5000,
-      status: "ACTIVE",
-    });
+
 
     //______Adding new part(seasonal variation Add in to the seed) in session 11__________
     // Create historical energy generation records from Aug 1, 2025 8pm to Jan 01, 2026 8am every 2 hours
     const records = [];
     const startDate = new Date("2025-11-01T08:00:00Z"); // August 1, 2025 8am UTC
-    const endDate = new Date("2026-02-16T08:00:00Z"); // Desember 22, 2025 8am UTC
+    const endDate = new Date("2026-02-27T08:00:00Z"); // February 27, 2026 8am UTC
 
     let currentDate = new Date(startDate);
     let recordCount = 0;
@@ -76,7 +69,7 @@ async function seed() {
       );
 
       records.push({
-        solarUnitId: solarUnit._id,
+        serialNumber: serialNumber,
         timeStamp: new Date(currentDate),
         energyGenerated: energyGenerated,
       });
@@ -88,7 +81,7 @@ async function seed() {
     await EnergyGenarationRecord.insertMany(records);
 
     console.log(
-      `Database seeded successfully. Generated ${recordCount} energy generation records from August 1, 2026 8am to February 16, 2025 8am.`,
+      `Database seeded successfully. Generated ${recordCount} energy generation records from ${startDate.toUTCString()} to ${endDate.toUTCString()}.`
     );
   } catch (err) {
     console.error("Seeding error:", err);
