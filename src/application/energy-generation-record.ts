@@ -8,12 +8,25 @@ export const getAllEnergyGenerationRecordsBySerialNumber = async (
 ) => {
   try {
     const { serialNumber } = req.params;
-    const energyGenerationRecords = await EnergyGenarationRecord.find({
-      serialNumber: serialNumber,
-    }).sort({ timeStamp: 1 });
+    // Reads 'sinceTimestamp' from request URL query
+    const { sinceTimestamp } = req.query;
+
+    const filter: { serialNumber: string; timeStamp?: { $gt: Date } } = {
+      serialNumber,
+    };
+    if (sinceTimestamp && typeof sinceTimestamp === "string") {
+      filter.timeStamp = { $gt: new Date(sinceTimestamp) };
+    }
+
+    const energyGenerationRecords = await EnergyGenarationRecord.find(
+      filter,
+    ).sort({ timestamp: 1 });
     res.status(200).json(energyGenerationRecords);
+    // const energyGenerationRecords = await EnergyGenarationRecord.find({
+    //   serialNumber: serialNumber,
+    // }).sort({ timeStamp: 1 });
+    // res.status(200).json(energyGenerationRecords);
   } catch (error) {
     next(error);
   }
 };
-
